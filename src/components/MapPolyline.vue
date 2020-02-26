@@ -1,5 +1,5 @@
 <template>
-  <div class="polyline" :cursor="cursor">
+  <div class="polyline">
     <l-circle-marker
       v-for="(point, i) in points"
       v-bind:key="i"
@@ -13,6 +13,7 @@
       v-for="(line, i) in hoveredLines"
       v-bind:key="`hovered-${i}`"
       :color="'green'"
+      :weight="6"
       :lat-lngs="line"
     />
     <l-polyline
@@ -27,7 +28,7 @@
 <script>
 import { LMap, LCircleMarker, LPolyline, LTooltip } from "vue2-leaflet";
 import * as math2d from "math2d";
-
+import { mapState } from "vuex";
 export default {
   name: "MapPolyline",
   components: {
@@ -35,9 +36,9 @@ export default {
     LTooltip,
     LPolyline
   },
+  computed: mapState(["leafletMap"]),
   props: {
-    cursorLatLng: Object,
-    leafletMap: Object
+    cursorLatLng: Object
   },
   data() {
     return {
@@ -78,14 +79,15 @@ export default {
               result.notHoveredLines.push(latLngSegment);
             }
             return result;
-            //
           },
           { notHoveredLines: [], hoveredLines: [] }
         );
-      console.log("ici", notHoveredLines);
       this.notHoveredLines = notHoveredLines;
       this.hoveredLines = hoveredLines;
-      this.cursor = this.hoveredLines.length ? "pointer" : "";
+      this.$store.commit(
+        "setCursor",
+        this.hoveredLines.length ? "pointer!important" : ""
+      );
     }
   },
   methods: {

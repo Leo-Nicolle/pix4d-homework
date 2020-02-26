@@ -1,21 +1,22 @@
 <template>
   <div class="map">
     <l-map
-      style="height: 350px"
+      :style="{ cursor, height: '350px' }"
       :zoom="zoom"
       :center="center"
       @mousemove="onMouseMove"
       ref="map"
     >
       <l-tile-layer :url="url"> </l-tile-layer>
-      <MapPolyline :cursorLatLng="cursorLatLng" :leafletMap="leafletMap" />
+      <MapPolyline :cursorLatLng="cursorLatLng" />
     </l-map>
   </div>
 </template>
 
 <script>
-import { LMap, LTileLayer, LCircleMarker, LPolyline } from "vue2-leaflet";
+import { LMap, LTileLayer } from "vue2-leaflet";
 import MapPolyline from "./MapPolyline";
+import { mapState } from "vuex";
 
 import "leaflet/dist/leaflet.css";
 export default {
@@ -23,9 +24,7 @@ export default {
   props: {},
   components: {
     LMap,
-    LCircleMarker,
     LTileLayer,
-    LPolyline,
     MapPolyline
   },
   data() {
@@ -33,22 +32,20 @@ export default {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       cursorLatLng: { lat: 0, lng: 0 },
       zoom: 8,
-      center: [47.31322, -1.319482],
-      markerLatLng: [47.31322, -1.319482],
-      leafletMap: null
+      center: [47.31322, -1.319482]
     };
   },
   mounted() {
-    this.leafletMap = this.$refs.map.mapObject;
+    this.$store.commit("setLeafLetMap", this.$refs.map.mapObject);
   },
+  computed: mapState(["cursor"]),
   methods: {
     onMouseMove(evt) {
       this.cursorLatLng = evt.latlng;
+      evt.originalEvent.stopPropagation();
     },
     onDragStart(evt) {},
-    onDragEnd(evt) {
-      console.log("dragsend", evt);
-    }
+    onDragEnd(evt) {}
   }
 };
 </script>
