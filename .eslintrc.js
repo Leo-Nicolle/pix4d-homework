@@ -3,14 +3,7 @@ module.exports = {
   rules: {
     "no-console": "off",
     "no-unused-vars": "off",
-    "vue/require-default-prop": [
-      "warning",
-      {
-        required: false,
-        "non-required": false
-      }
-    ],
-    "vue/no-unused-components": ["warning", { ignoreWhenBindingPresent: true }],
-    "vue/require-default-prop": ["warning"]
+    "vue/require-default-prop": [1],
+    "vue/no-unused-components": [1, { ignoreWhenBindingPresent: true }]
   }
 };

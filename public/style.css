@@ -1,0 +1,21 @@
+button {
+  color: #f4f4f4;
+  cursor: pointer;
+  background: #1abc9c;
+  font-weight: bold;
+  border-radius: 4px;
+  border: solid 0 #e3edf4;
+  border-bottom: 2px solid #3a9a95;
+  border-radius: 4px;
+  padding: 5px 10px 5px 10px;
+}
+button:disabled {
+  background: #777;
+  border: solid 0 #444;
+  cursor: not-allowed;
+}
+.button-active {
+  border-style: inset;
+  background: #b4e9df;
+  color: #777;
+}

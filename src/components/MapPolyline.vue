@@ -4,7 +4,7 @@
       v-for="(point, i) in points"
       v-bind:key="`point-${i}`"
       :lat-lng="point.coordinates"
-      :radius="point.isHovered ? '6' : '4'"
+      :radius="point.isHovered ? 6 : 4"
       :color="point.isHovered ? 'green' : 'red'"
     />
     <l-polyline
