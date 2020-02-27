@@ -3,9 +3,6 @@ import * as math2d from "math2d";
 class PointsController {
   constructor() {}
 
-  screenCoordToLatLng(points, leafletMap) {
-    return points.map(point => leafletMap.layerPointToLatLng(point));
-  }
   // transform an array of two points into a line object for math2d
   segmentToMath2dLine([pointA, pointB]) {
     const direction = math2d.vecNormalize(math2d.vecSubtract(pointB, pointA));
@@ -28,20 +25,20 @@ class PointsController {
     );
   }
 
-  getHoveredPoints({ mousePosition, points, hoverThreshold, leafletMap }) {
-    if (!mousePosition) return { points };
-    points = points.map(point => {
-      point.isHovered =
-        math2d.vecDistance(
-          mousePosition,
-          leafletMap.latLngToLayerPoint(point.coordinates)
-        ) < hoverThreshold;
-      return point;
+  updatePoints({ mouseData, points, hoverThreshold }) {
+    if (!mouseData.position) return points;
+    let hovered = false;
+    return points.map(point => {
+      const isHovered =
+        !hovered &&
+        math2d.vecDistance(mouseData.position, point.position) < hoverThreshold;
+      // prevents from hovering multiple points
+      hovered = hovered || isHovered;
+      return {
+        ...point,
+        isHovered
+      };
     });
-    return {
-      hoveredPoint: points.find(({ isHovered }) => isHovered),
-      points
-    };
   }
 
   getHoveredLines({
@@ -83,13 +80,16 @@ class PointsController {
 
             const lineIsHovered =
               // check if the projection lies on the segment (cursor between the 2 points )
-              this.isPointOnSegment(projection, [segment[0], segment[1]]) &&
+              this.isPointOnSegment(projection, [
+                segment[0].position,
+                segment[1].position
+              ]) &&
               // check if the projection is close enough from cursor
               math2d.vecDistance(projection, mousePosition) < hoverThreshold;
 
             const latLngSegment = {
               index: i,
-              points: this.screenCoordToLatLng(segment, leafletMap)
+              points: segment
             };
             if (lineIsHovered) {
               result.hoveredLines.push(latLngSegment);

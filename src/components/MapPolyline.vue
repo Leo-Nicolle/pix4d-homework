@@ -37,37 +37,48 @@ export default {
   data() {
     return {
       points: [],
-      hoveredPoint: null,
       notHoveredLines: [],
       hoveredLines: [],
+      dragingPoint: null,
       hoverThreshold: 6
     };
   },
-  watch: {
-    // mouseData: function(mouseData) {
-    //   if (!this.isMyMode) return;
-    //   if (mouseData.dragging) {
-    //     this.drag(mouseData);
-    //   } else if (mouseData.mouseclick) {
-    //     console.log("add", mouseData);
-    //     this.onClick(mouseData);
-    //   }
-    //   this.update(mouseData.position);
-    // }
-  },
+  computed: {},
   mounted() {
     this.initiate("polyline");
     this.update();
   },
   methods: {
-    onMapMouseMove() {
+    onMapMouseMove(mouseData) {
       if (!this.isMyMode) return;
+      // check hovered points
+      this.drag(mouseData);
+      this.points = pointsController.updatePoints({
+        mouseData,
+        points: this.points,
+        hoverThreshold: this.hoverThreshold
+      });
+      //drag if necessary
+      this.updateState();
+      // data.ingoreHoverLine = !mousePosition || hoveredPoint;
+      // const {
+      //   hoveredLines,
+      //   notHoveredLines
+      // } = pointsController.getHoveredLines(data);
+      // this.hoveredLines = hoveredLines;
+      // this.notHoveredLines = notHoveredLines;
+      // this.points = points;
+      // this.hoveredPoint = hoveredPoint;
+      // this.updateState();
     },
     onMapClick(mouseData) {
+      if (!this.isMyMode) return;
+
       const isRightClick = mouseData.evt.originalEvent.button === 2;
-      if (isRightClick) {
-        this.points = this.points.slice(0, 1);
-      } else {
+      if (this.hovered && isRightClick) {
+        this.points = this.points.filter(point => point !== this.hovered);
+      }
+      if (!this.hovered && !isRightClick) {
         this.points = this.points.concat({
           latLng: mouseData.latLng,
           position: mouseData.position
@@ -83,21 +94,28 @@ export default {
       // // remove hovered line on a right click
       // if (isRightClick && this.hoveredLines.length) {
       //   const index = this.hoveredLines[0].index;
-      //   this.points = this.points.filter(
-      //     (point, i) => i < index || i > index + 1
-      //   );
+      //
       // }
     },
     drag(mouseData) {
-      if (this.hoveredPoint) {
-        this.dragPointTo(mouseData.latLng);
-      }
-      if (this.hoveredLines.length) {
-        this.dragLine({
-          startPoint: mouseData.previous.latLng,
-          endPoint: mouseData.latLng
-        });
-      }
+      if (!mouseData.dragging) return;
+
+      // if (this.points.includes(this.hovered)) {
+      this.points = this.points.map(point => {
+        if (!point.isHovered) return point;
+        return {
+          ...point,
+          latLng: mouseData.latLng,
+          position: mouseData.position
+        };
+      });
+      // }
+      // if (this.hoveredLines.length) {
+      //   this.dragLine({
+      //     startPoint: mouseData.previous.latLng,
+      //     endPoint: mouseData.latLng
+      //   });
+      // }
     },
     dragLine({ startPoint, endPoint }) {
       const index = this.hoveredLines[0].index;
@@ -118,30 +136,30 @@ export default {
         .concat(this.points.slice(index + 2));
       // console.log(points, vector);
     },
-    dragPointTo(latLng) {
+    dragPointTo(mouseData) {
       this.points = this.points.map(point => {
         if (!point.isHovered) return point;
-        return { coordinates: [latLng.lat, latLng.lng] };
+        return { latLng: mouseData.latLng, position: mouseData.position };
       });
     },
     update(mousePosition) {
-      const data = {
-        mousePosition,
-        points: this.points,
-        hoverThreshold: this.hoverThreshold,
-        leafletMap: this.leafletMap
-      };
-      const { points, hoveredPoint } = pointsController.getHoveredPoints(data);
-      data.ingoreHoverLine = !mousePosition || hoveredPoint;
-      const {
-        hoveredLines,
-        notHoveredLines
-      } = pointsController.getHoveredLines(data);
-      this.hoveredLines = hoveredLines;
-      this.notHoveredLines = notHoveredLines;
-      this.points = points;
-      this.hoveredPoint = hoveredPoint;
-      this.updateState();
+      // const data = {
+      //   mousePosition,
+      //   points: this.points,
+      //   hoverThreshold: this.hoverThreshold,
+      //   leafletMap: this.leafletMap
+      // };
+      // const { points, hoveredPoint } = pointsController.getHoveredPoints(data);
+      // data.ingoreHoverLine = !mousePosition || hoveredPoint;
+      // const {
+      //   hoveredLines,
+      //   notHoveredLines
+      // } = pointsController.getHoveredLines(data);
+      // this.hoveredLines = hoveredLines;
+      // this.notHoveredLines = notHoveredLines;
+      // this.points = points;
+      // this.hoveredPoint = hoveredPoint;
+      // this.updateState();
     },
     updateState() {
       const cursor =
