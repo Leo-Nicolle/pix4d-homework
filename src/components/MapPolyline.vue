@@ -3,11 +3,11 @@
     <l-circle-marker
       v-for="(point, i) in points"
       :key="`point-${i}`"
-      :lat-lng="point.coordinates"
+      :lat-lng="point.latLng"
       :radius="point.isHovered ? 6 : 4"
       :color="point.isHovered ? 'green' : 'red'"
     />
-    <l-polyline
+    <!-- <l-polyline
       v-for="(line, i) in hoveredLines"
       :key="`hovered-${i}`"
       :color="'green'"
@@ -19,7 +19,7 @@
       :key="`notHovered-${i}`"
       :color="'red'"
       :lat-lngs="line.points"
-    />
+    /> -->
   </div>
 </template>
 
@@ -34,16 +34,9 @@ export default {
     LPolyline
   },
   mixins: [module],
-  props: {
-    mouseData: Object
-  },
   data() {
     return {
-      points: [
-        { coordinates: [47.18, -1.4] },
-        { coordinates: [47.18, -1.1] },
-        { coordinates: [47.18, -0.9] }
-      ],
+      points: [],
       hoveredPoint: null,
       notHoveredLines: [],
       hoveredLines: [],
@@ -51,41 +44,49 @@ export default {
     };
   },
   watch: {
-    mouseData: function(mouseData) {
-      if (!this.isMyMode) return;
-      if (mouseData.dragging) {
-        this.drag(mouseData);
-      } else if (mouseData.mouseclick) {
-        console.log("add", mouseData);
-        this.onClick(mouseData);
-      }
-      this.update(mouseData.position);
-    }
+    // mouseData: function(mouseData) {
+    //   if (!this.isMyMode) return;
+    //   if (mouseData.dragging) {
+    //     this.drag(mouseData);
+    //   } else if (mouseData.mouseclick) {
+    //     console.log("add", mouseData);
+    //     this.onClick(mouseData);
+    //   }
+    //   this.update(mouseData.position);
+    // }
   },
   mounted() {
     this.initiate("polyline");
     this.update();
   },
   methods: {
-    onClick(mouseData) {
+    onMapMouseMove() {
+      if (!this.isMyMode) return;
+    },
+    onMapClick(mouseData) {
       const isRightClick = mouseData.evt.originalEvent.button === 2;
-      // add point if nothing is hovered on a left click
-      if (!this.hoveredPoint && !this.hoveredLines.length && !isRightClick) {
+      if (isRightClick) {
+        this.points = this.points.slice(0, 1);
+      } else {
         this.points = this.points.concat({
-          coordinates: [mouseData.latLng.lat, mouseData.latLng.lng]
+          latLng: mouseData.latLng,
+          position: mouseData.position
         });
       }
-      // remove hovered point on a right click
-      if (isRightClick && this.hoveredPoint) {
-        this.points = this.points.filter(point => !point.isHovered);
-      }
-      // remove hovered line on a right click
-      if (isRightClick && this.hoveredLines.length) {
-        const index = this.hoveredLines[0].index;
-        this.points = this.points.filter(
-          (point, i) => i < index || i > index + 1
-        );
-      }
+      // add point if nothing is hovered on a left click
+      // if (!this.hoveredPoint && !this.hoveredLines.length && !isRightClick) {
+      //
+      // }
+      // // remove hovered point on a right click
+      // if (isRightClick && this.hoveredPoint) {
+      // }
+      // // remove hovered line on a right click
+      // if (isRightClick && this.hoveredLines.length) {
+      //   const index = this.hoveredLines[0].index;
+      //   this.points = this.points.filter(
+      //     (point, i) => i < index || i > index + 1
+      //   );
+      // }
     },
     drag(mouseData) {
       if (this.hoveredPoint) {

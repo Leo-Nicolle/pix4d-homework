@@ -1,20 +1,14 @@
 import { mapState } from "vuex";
-
+import mapPointerEvents from "./map-pointer-events";
 const module = {
+  mixins: [mapPointerEvents],
   data() {
     return {
       myMode: ""
     };
   },
   computed: {
-    ...mapState([
-      "mode",
-      "modes",
-      "cursor",
-      "hovered",
-      "selected",
-      "leafletMap"
-    ]),
+    ...mapState(["mode", "modes", "cursor", "hovered", "selected"]),
     isMyMode: function() {
       return this.mode === this.myMode;
     }

@@ -1,13 +1,9 @@
 <template>
   <div class="engine">
-    <Map
-      @mousemove="onMouseMove"
-      @mousedown="onMouseDown"
-      @mouseup="onMouseUp"
-      @click="onClick"
-    >
+    <Map>
       <template v-slot:layers>
-        <MapPolyline :mouse-data="mouseData" />
+        <MapPolyline />
+        <Dumb />
       </template>
     </Map>
   </div>
@@ -16,43 +12,21 @@
 <script>
 import Map from "./Map";
 import MapPolyline from "./MapPolyline";
+import Dumb from "./Dumb";
 
 export default {
   name: "InterractiveMap",
   components: {
     Map,
+    Dumb,
     MapPolyline
   },
   props: {},
   data() {
-    return {
-      mouseData: {},
-      mousedown: false
-    };
+    return {};
   },
   mounted() {},
-  methods: {
-    onMouseMove(mouseData) {
-      mouseData.dragging = this.mousedown;
-      //delta
-      mouseData.previous = {
-        position: this.mouseData.position,
-        latLng: this.mouseData.latLng
-      };
-      this.mouseData = mouseData;
-    },
-    onMouseDown(mouseData) {
-      this.mousedown = true;
-      this.mouseData.mouseDown = mouseData;
-    },
-    onMouseUp() {
-      this.mousedown = false;
-      this.mouseData.mouseDown = null;
-    },
-    onClick(mouseData) {
-      this.mouseData = mouseData;
-    }
-  }
+  methods: {}
 };
 </script>
 

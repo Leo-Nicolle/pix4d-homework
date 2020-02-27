@@ -37,9 +37,6 @@ export default new Vuex.Store({
     unsetCursor(state, mode) {
       state.cursor = "";
     },
-    setLeafLetMap(state, map) {
-      state.leafletMap = map;
-    },
     addMode(state, mode) {
       if (state.modes.includes(mode)) return;
       state.modes = state.modes.concat(mode);

@@ -5,11 +5,11 @@
       :style="{ cursor, height: '350px' }"
       :zoom="zoom"
       :center="center"
-      @mousemove="onMouseMove"
-      @mousedown="onMouseDown"
-      @mouseup="onMouseUp"
-      @contextmenu="onContextMenu"
       @click="onClick"
+      @mousemove="onMouseMove"
+      @mouseup="onMouseUp"
+      @mousedown="onMouseDown"
+      @contextmenu="onContextMenu"
     >
       <l-tile-layer :url="url" />
       <slot name="layers" />
@@ -34,14 +34,21 @@ export default {
     return {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       zoom: 8,
+      currentMouseData: {},
+      mouseDown: false,
       center: [47.31322, -1.319482]
     };
+  },
+  computed: {
+    leafletMap: function() {
+      return this.$refs.map.mapObject;
+    }
   },
   mounted() {
     this.initiate("default");
     // hack to be able to access the map's state from anywhere.
     // modules can need to project points from local to latlng etc
-    this.$store.commit("setLeafLetMap", this.$refs.map.mapObject);
+    // this.$store.commit("setLeafLetMap", this.$refs.map.mapObject);
   },
   methods: {
     getEventData(evt, data) {
@@ -53,34 +60,40 @@ export default {
       };
     },
     onMouseMove(evt) {
-      this.$emit("mousemove", this.getEventData(evt, { mousemove: true }));
-
-      if (this.isMyMode) {
-        this.$store.commit("setCursor", "");
-      } else {
-        evt.originalEvent.stopPropagation();
-        return false;
-      }
+      // mouseData.dragging = this.mousedown;
+      // const data = this.getEventData(evt, { mousemove: true });
+      // const currentData = this.currentData || data;
+      // data.delta = {
+      //   latLng: {
+      //     lat: data.latLng.lat - currentData.latLng.lat,
+      //     lng: data.latLng.lng - currentData.latLng.lng
+      //   },
+      //   position: {
+      //     lat: data.position.lat - currentData.position.lat,
+      //     lng: data.position.lng - currentData.position.lng
+      //   }
+      // };
+      // this.mapEventsBus.$emit("mousemove", data);
     },
     onMouseDown(evt) {
-      this.$emit("mousedown", this.getEventData(evt, { mousedown: true }));
-      if (this.mode !== "default" || this.hovered || this.selected) {
-        evt.originalEvent.stopPropagation();
-      }
+      this.mouseDown = true;
+      this.mapEventsBus.$emit("mousemove", this.getEventData(evt));
+      //
+      // this.$emit("mousedown");
+      // if (this.mode !== "default" || this.hovered || this.selected) {
+      //   evt.originalEvent.stopPropagation();
+      // }
     },
     onMouseUp(evt) {
-      console.log("mouseup");
-      this.$emit("mouseup", this.getEventData(evt, { mouseup: true }));
+      this.mouseDown = false;
+      this.mapEventsBus.$emit("mouseup", this.getEventData(evt));
     },
     onClick(evt) {
-      console.log("click ");
-
-      this.$emit("click", this.getEventData(evt, { mouseclick: true }));
+      this.mapEventsBus.$emit("click", this.getEventData(evt));
       // evt.originalEvent.stopPropagation();
     },
     onContextMenu(evt) {
-      console.log(evt.originalEvent);
-      this.$emit("click", this.getEventData(evt, { mouseclick: true }));
+      this.mapEventsBus.$emit("click", this.getEventData(evt));
       evt.originalEvent.preventDefault();
     }
   }
