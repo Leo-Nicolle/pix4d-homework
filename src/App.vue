@@ -1,18 +1,18 @@
 <template>
   <div id="app">
     <Toolbar />
-    <Map />
+    <Engine />
   </div>
 </template>
 
 <script>
-import Map from "./components/Map.vue";
+import Engine from "./components/Engine.vue";
 import Toolbar from "./components/ToolBar.vue";
 
 export default {
   name: "App",
   components: {
-    Map,
+    Engine,
     Toolbar
   }
 };

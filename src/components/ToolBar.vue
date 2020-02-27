@@ -17,12 +17,7 @@ import { mapState } from "vuex";
 
 export default {
   name: "Toolbar",
-  computed: mapState(["mode"]),
-  data() {
-    return {
-      modes: ["default", "polyline"]
-    };
-  },
+  computed: mapState(["mode", "modes"]),
   methods: {
     onClick(buttonMode) {
       this.$store.commit("setMode", buttonMode);

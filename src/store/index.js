@@ -8,6 +8,7 @@ export default new Vuex.Store({
     hovered: null,
     cursor: "",
     mode: "default",
+    modes: [],
     leafletMap: null,
     selected: null
   },
@@ -38,6 +39,13 @@ export default new Vuex.Store({
     },
     setLeafLetMap(state, map) {
       state.leafletMap = map;
+    },
+    addMode(state, mode) {
+      if (state.modes.includes(mode)) return;
+      state.modes = state.modes.concat(mode);
+    },
+    deleteMode(state, mode) {
+      state.modes = state.modes.filter(m => m !== mode);
     }
   },
   actions: {},

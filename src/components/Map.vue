@@ -1,51 +1,72 @@
 <template>
   <div class="map">
     <l-map
+      ref="map"
       :style="{ cursor, height: '350px' }"
       :zoom="zoom"
       :center="center"
       @mousemove="onMouseMove"
-      ref="map"
+      @mousedown="onMouseDown"
+      @mouseup="onMouseUp"
     >
-      <l-tile-layer :url="url"> </l-tile-layer>
-      <MapPolyline :cursorLatLng="cursorLatLng" />
+      <l-tile-layer :url="url" />
+      <slot name="layers" />
     </l-map>
   </div>
 </template>
 
 <script>
 import { LMap, LTileLayer } from "vue2-leaflet";
-import MapPolyline from "./MapPolyline";
 import { mapState } from "vuex";
+import module from "../mixins/module";
 
 import "leaflet/dist/leaflet.css";
 export default {
   name: "Map",
-  props: {},
   components: {
     LMap,
-    LTileLayer,
-    MapPolyline
+    LTileLayer
   },
+  mixins: [module],
   data() {
     return {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      cursorLatLng: { lat: 0, lng: 0 },
       zoom: 8,
       center: [47.31322, -1.319482]
     };
   },
   mounted() {
+    this.initiate("default");
+    // hack to be able to access the map's state from anywhere.
+    // modules can need to project points from local to latlng etc
     this.$store.commit("setLeafLetMap", this.$refs.map.mapObject);
   },
-  computed: mapState(["cursor"]),
   methods: {
     onMouseMove(evt) {
-      this.cursorLatLng = evt.latlng;
-      evt.originalEvent.stopPropagation();
+      const cursorLatLng = evt.latlng;
+      this.$emit("mousemove", {
+        latLng: evt.latlng,
+        position: this.leafletMap.latLngToLayerPoint(evt.latlng),
+        evt
+      });
+
+      if (this.mode !== "default" || this.hovered || this.selected) {
+        evt.originalEvent.stopPropagation();
+      }
     },
-    onDragStart(evt) {},
-    onDragEnd(evt) {}
+    onMouseDown(evt) {
+      this.$emit("mousedown", {
+        latLng: evt.latlng,
+        position: this.leafletMap.latLngToLayerPoint(evt.latlng),
+        evt
+      });
+      if (this.mode !== "default" || this.hovered || this.selected) {
+        evt.originalEvent.stopPropagation();
+      }
+    },
+    onMouseUp(evt) {
+      this.$emit("mouse-up", evt.latlng);
+    }
   }
 };
 </script>
