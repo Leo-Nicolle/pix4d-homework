@@ -47,9 +47,6 @@ export default {
   },
   mounted() {
     this.initiate("default");
-    // hack to be able to access the map's state from anywhere.
-    // modules can need to project points from local to latlng etc
-    // this.$store.commit("setLeafLetMap", this.$refs.map.mapObject);
   },
   methods: {
     getEventData(evt, data) {
@@ -76,17 +73,11 @@ export default {
         }
       };
       this.mapEventsBus.$emit("mousemove", data);
-      evt.originalEvent.stopPropagation();
     },
     onMouseDown(evt) {
       this.mouseDown = true;
       this.hasDragged = false;
       this.mapEventsBus.$emit("click", this.getEventData(evt));
-      //
-      // this.$emit("mousedown");
-      // if (this.mode !== "default" || this.hovered || this.selected) {
-      //   evt.originalEvent.stopPropagation();
-      // }
     },
     onMouseUp(evt) {
       this.mouseDown = false;
@@ -95,11 +86,15 @@ export default {
     onClick(evt) {
       if (this.hasDragged) return;
       this.mapEventsBus.$emit("click", this.getEventData(evt));
-      // evt.originalEvent.stopPropagation();
     },
     onContextMenu(evt) {
       this.mapEventsBus.$emit("click", this.getEventData(evt));
       evt.originalEvent.preventDefault();
+    },
+    onMapMouseMove(mouseData) {
+      if (!this.isMyMode) {
+        mouseData.evt.originalEvent.stopPropagation();
+      }
     }
   }
 };
