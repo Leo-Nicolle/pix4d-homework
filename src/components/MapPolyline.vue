@@ -12,13 +12,13 @@
       :key="`hovered-${i}`"
       :color="'green'"
       :weight="6"
-      :lat-lngs="line"
+      :lat-lngs="line.points"
     />
     <l-polyline
       v-for="(line, i) in notHoveredLines"
       :key="`notHovered-${i}`"
       :color="'red'"
-      :lat-lngs="line"
+      :lat-lngs="line.points"
     />
   </div>
 </template>
@@ -27,7 +27,6 @@
 import { LCircleMarker, LPolyline } from "vue2-leaflet";
 import module from "../mixins/module";
 import pointsController from "../js/points-controller";
-
 export default {
   name: "MapPolyline",
   components: {
@@ -53,12 +52,12 @@ export default {
   },
   watch: {
     // triggered by mousemove, updates which points and lines are hovered
-    mouseData: function({ position, dragging, latLng }) {
+    mouseData: function(mouseData) {
       if (!this.isMyMode) return;
-      if (dragging) {
-        this.drag(latLng);
+      if (mouseData.dragging) {
+        this.drag(mouseData);
       }
-      this.update(position);
+      this.update(mouseData.position);
     }
   },
   mounted() {
@@ -66,10 +65,35 @@ export default {
     this.update();
   },
   methods: {
-    drag(latLng) {
+    drag(mouseData) {
       if (this.hoveredPoint) {
-        this.dragPointTo(latLng);
+        this.dragPointTo(mouseData.latLng);
       }
+      if (this.hoveredLines.length) {
+        this.dragLine({
+          startPoint: mouseData.previous.latLng,
+          endPoint: mouseData.latLng
+        });
+      }
+    },
+    dragLine({ startPoint, endPoint }) {
+      const index = this.hoveredLines[0].index;
+      const vector = {
+        lat: endPoint.lat - startPoint.lat,
+        lng: endPoint.lng - startPoint.lng
+      };
+      this.points = this.points
+        .slice(0, index)
+        .concat(
+          this.points.slice(index, index + 2).map(point => ({
+            coordinates: [
+              vector.lat + point.coordinates[0],
+              vector.lng + point.coordinates[1]
+            ]
+          }))
+        )
+        .concat(this.points.slice(index + 2));
+      // console.log(points, vector);
     },
     dragPointTo(latLng) {
       this.points = this.points.map(point => {

@@ -43,7 +43,6 @@ export default {
   },
   methods: {
     onMouseMove(evt) {
-      const cursorLatLng = evt.latlng;
       this.$emit("mousemove", {
         latLng: evt.latlng,
         position: this.leafletMap.latLngToLayerPoint(evt.latlng),
@@ -57,7 +56,11 @@ export default {
       }
     },
     onMouseDown(evt) {
-      this.$emit("mousedown");
+      this.$emit("mousedown", {
+        latLng: evt.latlng,
+        position: this.leafletMap.latLngToLayerPoint(evt.latlng),
+        evt
+      });
       if (this.mode !== "default" || this.hovered || this.selected) {
         evt.originalEvent.stopPropagation();
       }

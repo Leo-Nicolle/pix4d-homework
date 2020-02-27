@@ -53,7 +53,15 @@ class PointsController {
   }) {
     if (ingoreHoverLine) {
       return {
-        notHoveredLines: [points.map(({ coordinates }) => coordinates)],
+        notHoveredLines: points
+          .map(({ coordinates }, i) => {
+            if (i === points.length - 1) return;
+            return {
+              index: i,
+              points: [coordinates, points[i + 1].coordinates]
+            };
+          })
+          .slice(0, points.length - 1),
         hoveredLines: []
       };
     }
@@ -79,7 +87,10 @@ class PointsController {
               // check if the projection is close enough from cursor
               math2d.vecDistance(projection, mousePosition) < hoverThreshold;
 
-            const latLngSegment = this.screenCoordToLatLng(segment, leafletMap);
+            const latLngSegment = {
+              index: i,
+              points: this.screenCoordToLatLng(segment, leafletMap)
+            };
             if (lineIsHovered) {
               result.hoveredLines.push(latLngSegment);
             } else {
