@@ -18,7 +18,7 @@ import Map from "./Map";
 import MapPolyline from "./MapPolyline";
 
 export default {
-  name: "Engine",
+  name: "InterractiveMap",
   components: {
     Map,
     MapPolyline
@@ -34,6 +34,7 @@ export default {
   methods: {
     onMouseMove(mouseData) {
       mouseData.dragging = this.mousedown;
+      //delta
       mouseData.previous = {
         position: this.mouseData.position,
         latLng: this.mouseData.latLng
@@ -48,7 +49,9 @@ export default {
       this.mousedown = false;
       this.mouseData.mouseDown = null;
     },
-    onClick() {}
+    onClick(mouseData) {
+      this.mouseData = mouseData;
+    }
   }
 };
 </script>

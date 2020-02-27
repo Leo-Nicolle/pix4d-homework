@@ -8,6 +8,8 @@
       @mousemove="onMouseMove"
       @mousedown="onMouseDown"
       @mouseup="onMouseUp"
+      @contextmenu="onContextMenu"
+      @click="onClick"
     >
       <l-tile-layer :url="url" />
       <slot name="layers" />
@@ -42,31 +44,44 @@ export default {
     this.$store.commit("setLeafLetMap", this.$refs.map.mapObject);
   },
   methods: {
-    onMouseMove(evt) {
-      this.$emit("mousemove", {
+    getEventData(evt, data) {
+      return {
+        ...data,
         latLng: evt.latlng,
         position: this.leafletMap.latLngToLayerPoint(evt.latlng),
         evt
-      });
+      };
+    },
+    onMouseMove(evt) {
+      this.$emit("mousemove", this.getEventData(evt, { mousemove: true }));
 
       if (this.isMyMode) {
         this.$store.commit("setCursor", "");
       } else {
         evt.originalEvent.stopPropagation();
+        return false;
       }
     },
     onMouseDown(evt) {
-      this.$emit("mousedown", {
-        latLng: evt.latlng,
-        position: this.leafletMap.latLngToLayerPoint(evt.latlng),
-        evt
-      });
+      this.$emit("mousedown", this.getEventData(evt, { mousedown: true }));
       if (this.mode !== "default" || this.hovered || this.selected) {
         evt.originalEvent.stopPropagation();
       }
     },
     onMouseUp(evt) {
-      this.$emit("mouseup");
+      console.log("mouseup");
+      this.$emit("mouseup", this.getEventData(evt, { mouseup: true }));
+    },
+    onClick(evt) {
+      console.log("click ");
+
+      this.$emit("click", this.getEventData(evt, { mouseclick: true }));
+      // evt.originalEvent.stopPropagation();
+    },
+    onContextMenu(evt) {
+      console.log(evt.originalEvent);
+      this.$emit("click", this.getEventData(evt, { mouseclick: true }));
+      evt.originalEvent.preventDefault();
     }
   }
 };

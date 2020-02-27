@@ -51,11 +51,13 @@ export default {
     };
   },
   watch: {
-    // triggered by mousemove, updates which points and lines are hovered
     mouseData: function(mouseData) {
       if (!this.isMyMode) return;
       if (mouseData.dragging) {
         this.drag(mouseData);
+      } else if (mouseData.mouseclick) {
+        console.log("add", mouseData);
+        this.onClick(mouseData);
       }
       this.update(mouseData.position);
     }
@@ -65,6 +67,26 @@ export default {
     this.update();
   },
   methods: {
+    onClick(mouseData) {
+      const isRightClick = mouseData.evt.originalEvent.button === 2;
+      // add point if nothing is hovered on a left click
+      if (!this.hoveredPoint && !this.hoveredLines.length && !isRightClick) {
+        this.points = this.points.concat({
+          coordinates: [mouseData.latLng.lat, mouseData.latLng.lng]
+        });
+      }
+      // remove hovered point on a right click
+      if (isRightClick && this.hoveredPoint) {
+        this.points = this.points.filter(point => !point.isHovered);
+      }
+      // remove hovered line on a right click
+      if (isRightClick && this.hoveredLines.length) {
+        const index = this.hoveredLines[0].index;
+        this.points = this.points.filter(
+          (point, i) => i < index || i > index + 1
+        );
+      }
+    },
     drag(mouseData) {
       if (this.hoveredPoint) {
         this.dragPointTo(mouseData.latLng);
