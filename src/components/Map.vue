@@ -50,22 +50,20 @@ export default {
         evt
       });
 
-      if (this.mode !== "default" || this.hovered || this.selected) {
+      if (this.isMyMode) {
+        this.$store.commit("setCursor", "");
+      } else {
         evt.originalEvent.stopPropagation();
       }
     },
     onMouseDown(evt) {
-      this.$emit("mousedown", {
-        latLng: evt.latlng,
-        position: this.leafletMap.latLngToLayerPoint(evt.latlng),
-        evt
-      });
+      this.$emit("mousedown");
       if (this.mode !== "default" || this.hovered || this.selected) {
         evt.originalEvent.stopPropagation();
       }
     },
     onMouseUp(evt) {
-      this.$emit("mouse-up", evt.latlng);
+      this.$emit("mouseup");
     }
   }
 };

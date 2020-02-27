@@ -1,8 +1,8 @@
 <template>
   <div class="engine">
-    <Map @mousemove="onMouseMove">
+    <Map @mousemove="onMouseMove" @mousedown="onMouseDown" @mouseup="onMouseUp">
       <template v-slot:layers>
-        <MapPolyline :mouse="mouse" />
+        <MapPolyline :mouse-data="mouseData" />
       </template>
     </Map>
   </div>
@@ -21,13 +21,21 @@ export default {
   props: {},
   data() {
     return {
-      mouse: {}
+      mouseData: {},
+      mousedown: false
     };
   },
   mounted() {},
   methods: {
-    onMouseMove(mouse) {
-      this.mouse = mouse;
+    onMouseMove(mouseData) {
+      mouseData.dragging = this.mousedown;
+      this.mouseData = mouseData;
+    },
+    onMouseDown() {
+      this.mousedown = true;
+    },
+    onMouseUp() {
+      this.mousedown = false;
     }
   }
 };

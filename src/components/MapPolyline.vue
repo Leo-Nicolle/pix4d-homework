@@ -36,7 +36,7 @@ export default {
   },
   mixins: [module],
   props: {
-    mouse: Object
+    mouseData: Object
   },
   data() {
     return {
@@ -45,7 +45,7 @@ export default {
         { coordinates: [47.18, -1.1] },
         { coordinates: [47.18, -0.9] }
       ],
-      pointHovered: null,
+      hoveredPoint: null,
       notHoveredLines: [],
       hoveredLines: [],
       hoverThreshold: 6
@@ -53,7 +53,11 @@ export default {
   },
   watch: {
     // triggered by mousemove, updates which points and lines are hovered
-    mouse: function({ position }) {
+    mouseData: function({ position, dragging, latLng }) {
+      if (!this.isMyMode) return;
+      if (dragging) {
+        this.drag(latLng);
+      }
       this.update(position);
     }
   },
@@ -62,6 +66,17 @@ export default {
     this.update();
   },
   methods: {
+    drag(latLng) {
+      if (this.hoveredPoint) {
+        this.dragPointTo(latLng);
+      }
+    },
+    dragPointTo(latLng) {
+      this.points = this.points.map(point => {
+        if (!point.isHovered) return point;
+        return { coordinates: [latLng.lat, latLng.lng] };
+      });
+    },
     update(mousePosition) {
       const data = {
         mousePosition,
@@ -83,16 +98,16 @@ export default {
     },
     updateState() {
       const cursor =
-        this.hoveredLines.length || this.pointHovered
-          ? "pointer"
-          : this.isMyMode
-          ? "crosshair"
-          : "";
+        this.hoveredLines.length || this.hoveredPoint ? "pointer" : "crosshair";
       this.$store.commit("setCursor", cursor);
-      this.$store.commit("hover", this.pointHovered || this.hoveredLines[0]);
+      this.$store.commit("hover", this.hoveredPoint || this.hoveredLines[0]);
     }
   }
 };
 </script>
 
-<style scoped></style>
+<style>
+.leaflet-interactive {
+  cursor: inherit;
+}
+</style>
