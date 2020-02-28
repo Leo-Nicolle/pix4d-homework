@@ -123,7 +123,6 @@ export default {
     updateState() {
       const cursor = this.hovered ? "pointer" : "crosshair";
       this.$store.commit("setCursor", cursor);
-      this.$store.commit("hover", this.hovered);
     }
   }
 };

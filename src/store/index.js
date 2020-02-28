@@ -5,26 +5,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    hovered: null,
     cursor: "",
     mode: "default",
-    modes: [],
-    leafletMap: null,
-    selected: null
+    modes: []
   },
   mutations: {
-    select(state, item) {
-      state.selected = item;
-    },
-    unselect(state, item) {
-      state.selected = null;
-    },
-    hover(state, item) {
-      state.hovered = item;
-    },
-    unhover(state, item) {
-      state.hovered = null;
-    },
     setMode(state, mode) {
       state.mode = mode;
     },
