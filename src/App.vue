@@ -1,18 +1,18 @@
 <template>
   <div id="app">
     <Toolbar />
-    <InterractiveMap />
+    <MapContainer />
   </div>
 </template>
 
 <script>
-import InterractiveMap from "./components/InterractiveMap.vue";
+import MapContainer from "./components/MapContainer.vue";
 import Toolbar from "./components/ToolBar.vue";
 
 export default {
   name: "App",
   components: {
-    InterractiveMap,
+    MapContainer,
     Toolbar
   }
 };

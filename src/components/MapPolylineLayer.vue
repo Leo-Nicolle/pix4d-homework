@@ -21,7 +21,7 @@ import { LCircleMarker, LPolyline } from "vue2-leaflet";
 import module from "../mixins/module";
 import pointsController from "../js/points-controller";
 export default {
-  name: "MapPolyline",
+  name: "MapPolylineLayer",
   components: {
     LCircleMarker,
     LPolyline

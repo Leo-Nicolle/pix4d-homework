@@ -2,7 +2,7 @@
   <div class="engine">
     <Map>
       <template v-slot:layers>
-        <MapPolyline />
+        <MapPolylineLayer />
       </template>
     </Map>
   </div>
@@ -10,13 +10,13 @@
 
 <script>
 import Map from "./Map";
-import MapPolyline from "./MapPolyline";
+import MapPolylineLayer from "./MapPolylineLayer";
 
 export default {
-  name: "InterractiveMap",
+  name: "MapContainer",
   components: {
     Map,
-    MapPolyline
+    MapPolylineLayer
   }
 };
 </script>
