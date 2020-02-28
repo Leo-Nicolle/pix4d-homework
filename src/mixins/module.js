@@ -13,7 +13,9 @@ const module = {
       return this.mode === this.myMode;
     }
   },
-
+  beforeDestroy() {
+    this.$store.commmit("deleteMode", this.myMode);
+  },
   methods: {
     initiate(mode) {
       this.myMode = mode;
