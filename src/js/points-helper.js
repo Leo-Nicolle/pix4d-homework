@@ -1,8 +1,6 @@
 import * as math2d from "math2d";
 
 class PointsHelper {
-  constructor() {}
-
   // transform an array of two points into a line object for math2d
   segmentToMath2dLine([pointA, pointB]) {
     const direction = math2d.vecNormalize(
@@ -41,6 +39,7 @@ class PointsHelper {
     });
   }
 
+  // computes hovered line
   getHoveredLines({ mouseData, points, hoverThreshold }) {
     const hoveredLineIndex = points.find(({ isHovered }) => isHovered)
       ? -1

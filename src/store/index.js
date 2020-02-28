@@ -13,14 +13,8 @@ export default new Vuex.Store({
     setMode(state, mode) {
       state.mode = mode;
     },
-    unsetMode(state, mode) {
-      state.mode = "default";
-    },
     setCursor(state, cursor) {
       state.cursor = cursor;
-    },
-    unsetCursor(state, mode) {
-      state.cursor = "";
     },
     addMode(state, mode) {
       if (state.modes.includes(mode)) return;

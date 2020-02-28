@@ -1,5 +1,9 @@
 import { mapState } from "vuex";
 import mapPointerEvents from "./map-pointer-events";
+
+/*
+Any component which displays content on the map should implement Module mixin
+*/
 const module = {
   mixins: [mapPointerEvents],
   data() {

@@ -1,5 +1,8 @@
 import EventEmitter from "events";
 
+/*
+   Any component which interracts with the map should implement MapContainer mixin
+*/
 const mapEventsBus = new EventEmitter();
 const mapPointerEvents = {
   data() {

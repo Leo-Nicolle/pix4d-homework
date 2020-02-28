@@ -33,7 +33,6 @@ export default {
       notHoveredLines: [],
       hoveredLine: [],
       hoveredLineIndex: -1,
-      dragingPoint: null,
       hoverThreshold: 6
     };
   },
@@ -50,12 +49,13 @@ export default {
   },
   methods: {
     update(mouseData) {
+      // check if points are hovered
       this.points = pointsHelper.updatePoints({
         mouseData,
         points: this.points,
         hoverThreshold: this.hoverThreshold
       });
-      //drag if necessary
+      // check if lines are hovered
       const { hoveredLine, hoveredLineIndex } = pointsHelper.getHoveredLines({
         mouseData,
         points: this.points,
@@ -63,6 +63,7 @@ export default {
       });
       this.hoveredLine = hoveredLine;
       this.hoveredLineIndex = hoveredLineIndex;
+      // update pointer
       this.updateState();
     },
     onMapMouseMove(mouseData) {
@@ -74,9 +75,11 @@ export default {
       if (!this.isMyMode) return;
 
       const isRightClick = mouseData.evt.originalEvent.button === 2;
+      // remove hovered point on right click
       if (this.hovered && isRightClick) {
         this.points = this.points.filter(point => point !== this.hovered);
       }
+      // add point on left click if nothing is hovered
       if (!this.hovered && !isRightClick) {
         this.points = this.points.concat({
           latLng: mouseData.latLng,
@@ -90,7 +93,7 @@ export default {
     },
     drag(mouseData) {
       if (!mouseData.dragging) return;
-
+      // drag hovered point
       this.points = this.points.map(point => {
         if (!point.isHovered) return point;
         return {
@@ -99,23 +102,23 @@ export default {
           position: mouseData.position
         };
       });
-      if (this.hoveredLineIndex > -1) {
-        this.points = this.points.map((point, i) => {
-          if (this.hoveredLineIndex < i - 1 || this.hoveredLineIndex > i)
-            return point;
-          return {
-            ...point,
-            latLng: {
-              lat: point.latLng.lat + mouseData.delta.latLng.lat,
-              lng: point.latLng.lng + mouseData.delta.latLng.lng
-            },
-            position: {
-              x: point.position.x + mouseData.delta.position.x,
-              y: point.position.y + mouseData.delta.position.y
-            }
-          };
-        });
-      }
+      if (this.hoveredLineIndex < 0) return;
+      // drag hovered line
+      this.points = this.points.map((point, i) => {
+        if (this.hoveredLineIndex < i - 1 || this.hoveredLineIndex > i)
+          return point;
+        return {
+          ...point,
+          latLng: {
+            lat: point.latLng.lat + mouseData.delta.latLng.lat,
+            lng: point.latLng.lng + mouseData.delta.latLng.lng
+          },
+          position: {
+            x: point.position.x + mouseData.delta.position.x,
+            y: point.position.y + mouseData.delta.position.y
+          }
+        };
+      });
     },
     updateState() {
       const cursor = this.hovered ? "pointer" : "crosshair";
