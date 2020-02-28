@@ -1,5 +1,6 @@
-import Vue from "vue";
-const mapEventsBus = new Vue();
+import EventEmitter from "events";
+
+const mapEventsBus = new EventEmitter();
 const mapPointerEvents = {
   data() {
     return {
@@ -7,10 +8,10 @@ const mapPointerEvents = {
     };
   },
   mounted() {
-    this.mapEventsBus.$on("mousemove", this.onMapMouseMove);
-    this.mapEventsBus.$on("mouseup", this.onMapMouseUp);
-    this.mapEventsBus.$on("mousedown", this.onMapMouseDown);
-    this.mapEventsBus.$on("click", this.onMapClick);
+    this.mapEventsBus.on("mousemove", this.onMapMouseMove);
+    this.mapEventsBus.on("mouseup", this.onMapMouseUp);
+    this.mapEventsBus.on("mousedown", this.onMapMouseDown);
+    this.mapEventsBus.on("click", this.onMapClick);
   },
   methods: {
     onMapMouseUp() {},
@@ -19,10 +20,10 @@ const mapPointerEvents = {
     onMapClick() {}
   },
   beforeDestroy() {
-    this.mapEventsBus.$off("mousemove");
-    this.mapEventsBus.$off("mouseup");
-    this.mapEventsBus.$off("mousedown");
-    this.mapEventsBus.$off("click");
+    this.mapEventsBus.off("mousemove", this.onMapMouseMove);
+    this.mapEventsBus.off("mouseup", this.onMapMouseUp);
+    this.mapEventsBus.off("mousedown", this.onMapMouseDown);
+    this.mapEventsBus.off("click", this.onMapClick);
   }
 };
 

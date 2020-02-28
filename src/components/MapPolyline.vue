@@ -7,19 +7,12 @@
       :radius="point.isHovered ? 6 : 4"
       :color="point.isHovered ? 'green' : 'red'"
     />
-    <!-- <l-polyline
-      v-for="(line, i) in hoveredLines"
-      :key="`hovered-${i}`"
+    <l-polyline :color="'red'" :lat-lngs="points.map(point => point.latLng)" />
+    <l-polyline
       :color="'green'"
       :weight="6"
-      :lat-lngs="line.points"
+      :lat-lngs="hoveredLine.map(point => point.latLng)"
     />
-    <l-polyline
-      v-for="(line, i) in notHoveredLines"
-      :key="`notHovered-${i}`"
-      :color="'red'"
-      :lat-lngs="line.points"
-    /> -->
   </div>
 </template>
 
@@ -38,38 +31,47 @@ export default {
     return {
       points: [],
       notHoveredLines: [],
-      hoveredLines: [],
+      hoveredLine: [],
+      hoveredLineIndex: -1,
       dragingPoint: null,
       hoverThreshold: 6
     };
   },
-  computed: {},
+  computed: {
+    hovered: function() {
+      return (
+        this.points.find(({ isHovered }) => isHovered) ||
+        this.hoveredLineIndex > -1
+      );
+    }
+  },
   mounted() {
     this.initiate("polyline");
-    this.update();
   },
   methods: {
-    onMapMouseMove(mouseData) {
-      if (!this.isMyMode) return;
-      // check hovered points
-      this.drag(mouseData);
+    update(mouseData) {
       this.points = pointsController.updatePoints({
         mouseData,
         points: this.points,
         hoverThreshold: this.hoverThreshold
       });
       //drag if necessary
+      const {
+        hoveredLine,
+        hoveredLineIndex
+      } = pointsController.getHoveredLines({
+        mouseData,
+        points: this.points,
+        hoverThreshold: this.hoverThreshold
+      });
+      this.hoveredLine = hoveredLine;
+      this.hoveredLineIndex = hoveredLineIndex;
       this.updateState();
-      // data.ingoreHoverLine = !mousePosition || hoveredPoint;
-      // const {
-      //   hoveredLines,
-      //   notHoveredLines
-      // } = pointsController.getHoveredLines(data);
-      // this.hoveredLines = hoveredLines;
-      // this.notHoveredLines = notHoveredLines;
-      // this.points = points;
-      // this.hoveredPoint = hoveredPoint;
-      // this.updateState();
+    },
+    onMapMouseMove(mouseData) {
+      if (!this.isMyMode) return;
+      this.drag(mouseData);
+      this.update(mouseData);
     },
     onMapClick(mouseData) {
       if (!this.isMyMode) return;
@@ -84,23 +86,11 @@ export default {
           position: mouseData.position
         });
       }
-      // add point if nothing is hovered on a left click
-      // if (!this.hoveredPoint && !this.hoveredLines.length && !isRightClick) {
-      //
-      // }
-      // // remove hovered point on a right click
-      // if (isRightClick && this.hoveredPoint) {
-      // }
-      // // remove hovered line on a right click
-      // if (isRightClick && this.hoveredLines.length) {
-      //   const index = this.hoveredLines[0].index;
-      //
-      // }
+      this.update(mouseData);
     },
     drag(mouseData) {
       if (!mouseData.dragging) return;
 
-      // if (this.points.includes(this.hovered)) {
       this.points = this.points.map(point => {
         if (!point.isHovered) return point;
         return {
@@ -109,63 +99,28 @@ export default {
           position: mouseData.position
         };
       });
-      // }
-      // if (this.hoveredLines.length) {
-      //   this.dragLine({
-      //     startPoint: mouseData.previous.latLng,
-      //     endPoint: mouseData.latLng
-      //   });
-      // }
-    },
-    dragLine({ startPoint, endPoint }) {
-      const index = this.hoveredLines[0].index;
-      const vector = {
-        lat: endPoint.lat - startPoint.lat,
-        lng: endPoint.lng - startPoint.lng
-      };
-      this.points = this.points
-        .slice(0, index)
-        .concat(
-          this.points.slice(index, index + 2).map(point => ({
-            coordinates: [
-              vector.lat + point.coordinates[0],
-              vector.lng + point.coordinates[1]
-            ]
-          }))
-        )
-        .concat(this.points.slice(index + 2));
-      // console.log(points, vector);
-    },
-    dragPointTo(mouseData) {
-      this.points = this.points.map(point => {
-        if (!point.isHovered) return point;
-        return { latLng: mouseData.latLng, position: mouseData.position };
-      });
-    },
-    update(mousePosition) {
-      // const data = {
-      //   mousePosition,
-      //   points: this.points,
-      //   hoverThreshold: this.hoverThreshold,
-      //   leafletMap: this.leafletMap
-      // };
-      // const { points, hoveredPoint } = pointsController.getHoveredPoints(data);
-      // data.ingoreHoverLine = !mousePosition || hoveredPoint;
-      // const {
-      //   hoveredLines,
-      //   notHoveredLines
-      // } = pointsController.getHoveredLines(data);
-      // this.hoveredLines = hoveredLines;
-      // this.notHoveredLines = notHoveredLines;
-      // this.points = points;
-      // this.hoveredPoint = hoveredPoint;
-      // this.updateState();
+      if (this.hoveredLineIndex > -1) {
+        this.points = this.points.map((point, i) => {
+          if (this.hoveredLineIndex < i - 1 || this.hoveredLineIndex > i)
+            return point;
+          return {
+            ...point,
+            latLng: {
+              lat: point.latLng.lat + mouseData.delta.latLng.lat,
+              lng: point.latLng.lng + mouseData.delta.latLng.lng
+            },
+            position: {
+              x: point.position.x + mouseData.delta.position.x,
+              y: point.position.y + mouseData.delta.position.y
+            }
+          };
+        });
+      }
     },
     updateState() {
-      const cursor =
-        this.hoveredLines.length || this.hoveredPoint ? "pointer" : "crosshair";
+      const cursor = this.hovered ? "pointer" : "crosshair";
       this.$store.commit("setCursor", cursor);
-      this.$store.commit("hover", this.hoveredPoint || this.hoveredLines[0]);
+      this.$store.commit("hover", this.hovered);
     }
   }
 };

@@ -36,7 +36,6 @@ export default {
       zoom: 8,
       currentMouseData: {},
       mouseDown: false,
-      hasDragged: false,
       center: [47.31322, -1.319482]
     };
   },
@@ -50,45 +49,53 @@ export default {
   },
   methods: {
     getEventData(evt, data) {
-      return {
+      this.currentData = {
         ...data,
         latLng: evt.latlng,
         position: this.leafletMap.latLngToLayerPoint(evt.latlng),
         evt
       };
+      return this.currentData;
     },
     onMouseMove(evt) {
-      this.hasDragged = this.mouseDown;
+      const currentData = this.currentData;
       const data = this.getEventData(evt, { dragging: this.mouseDown });
-
-      const currentData = this.currentData || data;
-      data.delta = {
-        latLng: {
-          lat: data.latLng.lat - currentData.latLng.lat,
-          lng: data.latLng.lng - currentData.latLng.lng
-        },
-        position: {
-          lat: data.position.lat - currentData.position.lat,
-          lng: data.position.lng - currentData.position.lng
-        }
-      };
-      this.mapEventsBus.$emit("mousemove", data);
+      data.delta = currentData
+        ? {
+            latLng: {
+              lat: data.latLng.lat - currentData.latLng.lat,
+              lng: data.latLng.lng - currentData.latLng.lng
+            },
+            position: {
+              x: data.position.x - currentData.position.x,
+              y: data.position.y - currentData.position.y
+            }
+          }
+        : {
+            latLng: {
+              lat: 0,
+              lng: 0
+            },
+            position: {
+              x: 0,
+              y: 0
+            }
+          };
+      this.mapEventsBus.emit("mousemove", data);
     },
     onMouseDown(evt) {
       this.mouseDown = true;
-      this.hasDragged = false;
-      this.mapEventsBus.$emit("click", this.getEventData(evt));
+      this.mapEventsBus.emit("mousedown", this.getEventData(evt));
     },
     onMouseUp(evt) {
       this.mouseDown = false;
-      this.mapEventsBus.$emit("mouseup", this.getEventData(evt));
+      this.mapEventsBus.emit("mouseup", this.getEventData(evt));
     },
     onClick(evt) {
-      if (this.hasDragged) return;
-      this.mapEventsBus.$emit("click", this.getEventData(evt));
+      this.mapEventsBus.emit("click", this.getEventData(evt));
     },
     onContextMenu(evt) {
-      this.mapEventsBus.$emit("click", this.getEventData(evt));
+      this.mapEventsBus.emit("click", this.getEventData(evt));
       evt.originalEvent.preventDefault();
     },
     onMapMouseMove(mouseData) {
