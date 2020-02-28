@@ -44,8 +44,14 @@ export default {
       return this.$refs.map.mapObject;
     }
   },
+  watch: {
+    mode: function() {
+      if (!this.isMyMode) return;
+      this.$store.commit("setCursor", "");
+    }
+  },
   mounted() {
-    this.initiate("default");
+    this.initiate("map");
   },
   methods: {
     getEventData(evt, data) {
@@ -107,7 +113,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .map {
   max-width: 100%;

@@ -35,7 +35,4 @@ export default {
 .toolbar > button {
   margin: 2px 4px;
 }
-
-.selected {
-}
 </style>
