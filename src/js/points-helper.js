@@ -1,6 +1,6 @@
 import * as math2d from "math2d";
 
-class PointsController {
+class PointsHelper {
   constructor() {}
 
   // transform an array of two points into a line object for math2d
@@ -72,5 +72,5 @@ class PointsController {
   }
 }
 
-const pointsController = new PointsController();
-export default pointsController;
+const pointsHelper = new PointsHelper();
+export default pointsHelper;

@@ -19,7 +19,7 @@
 <script>
 import { LCircleMarker, LPolyline } from "vue2-leaflet";
 import module from "../mixins/module";
-import pointsController from "../js/points-controller";
+import pointsHelper from "../js/points-helper";
 export default {
   name: "MapPolylineLayer",
   components: {
@@ -50,16 +50,13 @@ export default {
   },
   methods: {
     update(mouseData) {
-      this.points = pointsController.updatePoints({
+      this.points = pointsHelper.updatePoints({
         mouseData,
         points: this.points,
         hoverThreshold: this.hoverThreshold
       });
       //drag if necessary
-      const {
-        hoveredLine,
-        hoveredLineIndex
-      } = pointsController.getHoveredLines({
+      const { hoveredLine, hoveredLineIndex } = pointsHelper.getHoveredLines({
         mouseData,
         points: this.points,
         hoverThreshold: this.hoverThreshold
