@@ -50,7 +50,7 @@ export default {
   watch: {
     mode: function() {
       if (!this.isMyMode) return;
-      this.$store.commit("setCursor", "");
+      this.$store.commit("setCursor", "grab");
     }
   },
   mounted() {
