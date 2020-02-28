@@ -88,6 +88,9 @@ export default {
       }
       this.update(mouseData);
     },
+    onMapTransformChange(transform) {
+      this.points = this.points.map(point => transform(point));
+    },
     drag(mouseData) {
       if (!mouseData.dragging) return;
 

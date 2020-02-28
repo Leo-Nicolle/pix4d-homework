@@ -10,6 +10,9 @@
       @mouseup="onMouseUp"
       @mousedown="onMouseDown"
       @contextmenu="onContextMenu"
+      @update:zoom="onTranformChange"
+      @update:center="onTranformChange"
+      @update:bounds="onTranformChange"
     >
       <l-tile-layer :url="url" />
       <slot name="layers" />
@@ -88,6 +91,13 @@ export default {
             }
           };
       this.mapEventsBus.emit("mousemove", data);
+    },
+    onTranformChange() {
+      const transform = point => ({
+        ...point,
+        position: this.leafletMap.latLngToLayerPoint(point.latLng)
+      });
+      this.mapEventsBus.emit("transform-change", transform);
     },
     onMouseDown(evt) {
       this.mouseDown = true;

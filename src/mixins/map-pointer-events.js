@@ -12,18 +12,21 @@ const mapPointerEvents = {
     this.mapEventsBus.on("mouseup", this.onMapMouseUp);
     this.mapEventsBus.on("mousedown", this.onMapMouseDown);
     this.mapEventsBus.on("click", this.onMapClick);
+    this.mapEventsBus.on("transform-change", this.onMapTransformChange);
   },
   methods: {
     onMapMouseUp() {},
     onMapMouseDown() {},
     onMapMouseMove() {},
-    onMapClick() {}
+    onMapClick() {},
+    onMapTransformChange() {}
   },
   beforeDestroy() {
     this.mapEventsBus.off("mousemove", this.onMapMouseMove);
     this.mapEventsBus.off("mouseup", this.onMapMouseUp);
     this.mapEventsBus.off("mousedown", this.onMapMouseDown);
     this.mapEventsBus.off("click", this.onMapClick);
+    this.mapEventsBus.off("transform-change", this.onMapTransformChange);
   }
 };
 
