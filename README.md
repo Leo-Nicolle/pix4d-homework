@@ -1,10 +1,5 @@
 # pix4d-homework
 
-### Design choices
-
-- extensivity: I designed the app so we could easily add new features and display other things on the map
-- reactivity:
-
 ## Project setup
 
 ```

@@ -115,8 +115,10 @@ export default {
       evt.originalEvent.preventDefault();
     },
     onMapMouseMove(mouseData) {
-      if (!this.isMyMode) {
-        mouseData.evt.originalEvent.stopPropagation();
+      if (this.isMyMode) {
+        this.leafletMap.dragging.enable();
+      } else {
+        this.leafletMap.dragging.disable();
       }
     }
   }
