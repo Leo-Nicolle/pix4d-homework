@@ -22,7 +22,6 @@
 
 <script>
 import { LMap, LTileLayer } from "vue2-leaflet";
-import { mapState } from "vuex";
 import module from "../mixins/module";
 
 import "leaflet/dist/leaflet.css";
@@ -114,7 +113,7 @@ export default {
       this.mapEventsBus.emit("click", this.getEventData(evt));
       evt.originalEvent.preventDefault();
     },
-    onMapMouseMove(mouseData) {
+    onMapMouseMove() {
       if (this.isMyMode) {
         this.leafletMap.dragging.enable();
       } else {
