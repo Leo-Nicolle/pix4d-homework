@@ -11,15 +11,18 @@ const loadSave = {
   mounted() {
     eventBus.on("save", this.saveState);
     eventBus.on("load", this.loadState);
+    eventBus.on("reset", this.resetState);
   },
 
   beforeDestroy() {
     eventBus.off("save", this.saveState);
     eventBus.off("load", this.loadState);
+    eventBus.off("reset", this.resetState);
   },
   methods: {
     saveState() {},
-    loadState() {}
+    loadState() {},
+    resetState() {}
   }
 };
 export default loadSave;

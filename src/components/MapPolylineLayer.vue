@@ -66,7 +66,8 @@ export default {
       this.hoveredLine = hoveredLine;
       this.hoveredLineIndex = hoveredLineIndex;
       // update pointer
-      this.updateState();
+      const cursor = this.hovered ? "pointer" : "crosshair";
+      this.$store.commit("setCursor", cursor);
     },
     onMapMouseMove(mouseData) {
       if (!this.isMyMode) return;
@@ -132,9 +133,8 @@ export default {
         };
       });
     },
-    updateState() {
-      const cursor = this.hovered ? "pointer" : "crosshair";
-      this.$store.commit("setCursor", cursor);
+    resetState() {
+      this.points = [];
     }
   }
 };

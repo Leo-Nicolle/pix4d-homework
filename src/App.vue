@@ -59,7 +59,11 @@ export default {
     },
     onLoadFlightPlan(index) {
       const savedState = this.flightPlans[index];
-      if (!savedState) return;
+      if (!savedState) {
+        // resets the map if there is no flight plan
+        eventBus.emit("reset");
+        return;
+      }
       // on page load the toolbar will trigger onload as soon as it is ready
       // but at this moment the other components are not
       // so we wait for the next tick. Could have also been done in
