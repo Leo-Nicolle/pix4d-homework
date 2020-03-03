@@ -1,16 +1,14 @@
 import { mapState } from "vuex";
 import mapPointerEvents from "./map-pointer-events";
-import eventBus from "../js/event-bus";
-
+import loadSave from "./load-save";
 /*
 Any component which displays content on the map should implement Module mixin
 */
 const module = {
-  mixins: [mapPointerEvents],
+  mixins: [mapPointerEvents, loadSave],
   data() {
     return {
-      myMode: "",
-      dataToSave: []
+      myMode: ""
     };
   },
   computed: {
@@ -19,14 +17,8 @@ const module = {
       return this.mode === this.myMode;
     }
   },
-  mounted() {
-    eventBus.on("save", this.saveState);
-    eventBus.on("load", this.loadState);
-  },
   beforeDestroy() {
     this.$store.commit("deleteMode", this.myMode);
-    eventBus.off("save");
-    eventBus.off("load");
   },
   methods: {
     initiate(mode) {
