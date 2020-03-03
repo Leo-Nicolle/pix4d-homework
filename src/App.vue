@@ -60,6 +60,10 @@ export default {
     onLoadFlightPlan(index) {
       const savedState = this.flightPlans[index];
       if (!savedState) return;
+      // on page load the toolbar will trigger onload as soon as it is ready
+      // but at this moment the other components are not
+      // so we wait for the next tick. Could have also been done in
+      // toolbar.vue
       eventBus.emit("load", savedState);
     },
     onDeleteFlightPlan(index) {
