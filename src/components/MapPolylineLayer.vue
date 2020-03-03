@@ -50,7 +50,7 @@ export default {
     this.initiate("polyline");
   },
   methods: {
-    mouseMoveUpdate(mouseData) {
+    updateHoverAndPointer(mouseData) {
       // check if points are hovered
       this.points = pointsHelper.updatePoints({
         mouseData,
@@ -102,7 +102,7 @@ export default {
     onMapMouseMove(mouseData) {
       if (!this.isMyMode) return;
       this.drag(mouseData);
-      this.mouseMoveUpdate(mouseData);
+      this.updateHoverAndPointer(mouseData);
     },
     onMapClick(mouseData) {
       if (!this.isMyMode) return;
@@ -129,7 +129,7 @@ export default {
           })
           .concat(this.points.slice(this.hoveredLineIndex + 1));
       }
-      this.update(mouseData);
+      this.updateHoverAndPointer(mouseData);
     },
     onMapTransformChange(transform) {
       this.points = this.points.map(point => transform(point));
