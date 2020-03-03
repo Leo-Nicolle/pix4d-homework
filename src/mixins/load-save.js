@@ -9,7 +9,6 @@ const loadSave = {
   mounted() {
     eventBus.on("save", this.saveState);
     eventBus.on("load", this.loadState);
-    this.loadState();
   },
 
   beforeDestroy() {

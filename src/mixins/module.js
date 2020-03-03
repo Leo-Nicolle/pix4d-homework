@@ -25,17 +25,17 @@ const module = {
       this.myMode = mode;
       this.$store.commit("addMode", this.myMode);
     },
-    saveState() {
-      const stateToSave = this.dataToSave.reduce((stateToSave, key) => {
-        stateToSave[key] = this.$data[key];
-        return stateToSave;
+    saveState(toSerialize) {
+      const moduleData = this.dataToSave.reduce((moduleData, key) => {
+        moduleData[key] = this.$data[key];
+        return moduleData;
       }, {});
-      localStorage.setItem(this.myMode, JSON.stringify(stateToSave));
+      toSerialize[this.myMode] = moduleData;
     },
-    loadState() {
-      const stateToLoad = localStorage.getItem(this.myMode);
-      if (!stateToLoad) return;
-      Object.entries(JSON.parse(stateToLoad)).forEach(([key, value]) => {
+    loadState(toUnserialize) {
+      const dataToLoad = toUnserialize[this.myMode];
+      if (!dataToLoad) return;
+      Object.entries(dataToLoad).forEach(([key, value]) => {
         this.$data[key] = value;
       });
     }

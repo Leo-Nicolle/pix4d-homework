@@ -12,11 +12,21 @@
       </button>
     </div>
     <div>
+      <p>Flight Plans</p>
       <button @click="onClickSave">
         Save
       </button>
-      <button @click="onClickLoad">
-        Load
+      <select @change="onSelectChange">
+        <option
+          v-for="(flightPlan, i) in flightPlans"
+          :key="i"
+          :selected="i === selectedFlightPlan"
+        >
+          {{ i }}
+        </option>
+      </select>
+      <button @click="onClickDelete">
+        Delete
       </button>
     </div>
   </div>
@@ -27,7 +37,26 @@ import { mapState } from "vuex";
 
 export default {
   name: "Toolbar",
-  computed: mapState(["mode", "modes"]),
+  props: ["flightPlans"],
+  computed: {
+    ...mapState(["mode", "modes"])
+  },
+  watch: {
+    flightPlans: function(newValue) {
+      this.selectedFlightPlan = newValue.length - 1;
+      console.log("la");
+    },
+    selectedFlightPlan: function(newValue) {
+      console.log("emit");
+      this.$emit("load", newValue);
+    }
+  },
+
+  data() {
+    return {
+      selectedFlightPlan: 0
+    };
+  },
   methods: {
     onClickMode(buttonMode) {
       this.$store.commit("setMode", buttonMode);
@@ -35,8 +64,12 @@ export default {
     onClickSave() {
       this.$emit("save");
     },
-    onClickLoad() {
-      this.$emit("load");
+    onClickDelete() {
+      this.$emit("delete-flight-plan", this.selectedFlightPlan);
+    },
+    onSelectChange(evt) {
+      console.log("ici");
+      this.selectedFlightPlan = evt.target.value;
     }
   }
 };
@@ -49,6 +82,7 @@ export default {
   margin: 2px 4px;
 }
 .toolbar > div {
+  margin: 2px 0;
   display: flex;
   flex-direction: row;
   justify-content: center;

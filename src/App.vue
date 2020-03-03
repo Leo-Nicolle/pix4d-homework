@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <Toolbar @save="onSave()" @load="onLoad()" />
+    <Toolbar
+      :flight-plans="flightPlans"
+      @save="onSave"
+      @load="onLoad"
+      @delete-flight-plan="onDeleteFlightPlan"
+    />
     <MapContainer />
   </div>
 </template>
@@ -18,20 +23,49 @@ export default {
     Toolbar
   },
   mixins: [loadSave],
+  data() {
+    return {
+      flightPlans: []
+    };
+  },
+  mounted() {
+    this.createFlightPlansIfNotExists();
+    this.fetchFlightPlans();
+  },
   methods: {
+    fetchFlightPlans() {
+      this.flightPlans = JSON.parse(localStorage.getItem("flight-plans"));
+      return this.flightPlans;
+    },
+    uploadFlightPlans(flightPlans) {
+      localStorage.setItem("flight-plans", JSON.stringify(this.flightPlans));
+    },
+    createFlightPlansIfNotExists() {
+      if (this.fetchFlightPlans()) return;
+      this.flightPlans = [];
+      this.uploadFlightPlans();
+    },
     onSave() {
-      eventBus.emit("save");
+      const savedState = {};
+      eventBus.emit("save", savedState);
+      this.flightPlans = this.flightPlans.concat(savedState);
+      this.uploadFlightPlans();
     },
-    onLoad() {
-      eventBus.emit("load");
-    },
-    saveState() {
-      localStorage.setItem("global-store", JSON.stringify(this.$store.state));
-    },
-    loadState() {
-      const savedState = localStorage.getItem("global-store");
+    onLoad(index) {
+      const savedState = this.flightPlans[index];
       if (!savedState) return;
-      this.$store.replaceState(JSON.parse(savedState));
+      eventBus.emit("load", savedState);
+    },
+    onDeleteFlightPlan(index) {
+      this.flightPlans = this.flightPlans.filter((e, i) => i !== +index);
+      this.uploadFlightPlans();
+    },
+    saveState(savedState) {
+      savedState.globalStore = this.$store.state;
+    },
+    loadState({ globalStore }) {
+      if (!globalStore) return;
+      this.$store.replaceState(globalStore);
     }
   }
 };
