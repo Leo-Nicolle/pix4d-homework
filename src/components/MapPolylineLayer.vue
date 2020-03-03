@@ -88,6 +88,16 @@ export default {
           position: mouseData.position
         });
       }
+      // add a point on left click if a line is hovered
+      if (this.hoveredLineIndex > -1 && !isRightClick) {
+        this.points = this.points
+          .slice(0, this.hoveredLineIndex + 1)
+          .concat({
+            latLng: mouseData.latLng,
+            position: mouseData.position
+          })
+          .concat(this.points.slice(this.hoveredLineIndex + 1));
+      }
       this.update(mouseData);
     },
     onMapTransformChange(transform) {
