@@ -33,7 +33,8 @@ export default {
       notHoveredLines: [],
       hoveredLine: [],
       hoveredLineIndex: -1,
-      hoverThreshold: 6
+      hoverThreshold: 6,
+      dataToSave: ["points"]
     };
   },
   computed: {
