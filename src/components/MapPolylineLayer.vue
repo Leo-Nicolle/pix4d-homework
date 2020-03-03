@@ -89,7 +89,7 @@ export default {
         });
       }
       // add a point on left click if a line is hovered
-      if (this.hoveredLineIndex > -1 && !isRightClick) {
+      if (this.hoveredLineIndex > -1 && !isRightClick && !mouseData.dragging) {
         this.points = this.points
           .slice(0, this.hoveredLineIndex + 1)
           .concat({

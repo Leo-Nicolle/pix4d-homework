@@ -7,12 +7,15 @@
       @delete-flight-plan="onDeleteFlightPlan"
     />
     <MapContainer />
+    <Help />
   </div>
 </template>
 
 <script>
 import MapContainer from "./components/MapContainer.vue";
 import Toolbar from "./components/ToolBar.vue";
+import Help from "./components/Help.vue";
+
 import eventBus from "./js/event-bus";
 import loadSave from "./mixins/load-save";
 
@@ -20,7 +23,8 @@ export default {
   name: "App",
   components: {
     MapContainer,
-    Toolbar
+    Toolbar,
+    Help
   },
   mixins: [loadSave],
   data() {

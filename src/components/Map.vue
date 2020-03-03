@@ -38,6 +38,7 @@ export default {
       zoom: 8,
       currentMouseData: {},
       mouseDown: false,
+      dragging: false,
       center: [47.31322, -1.319482]
     };
   },
@@ -59,6 +60,7 @@ export default {
     getEventData(evt, data) {
       this.currentData = {
         ...data,
+        dragging: this.dragging,
         latLng: evt.latlng,
         position: this.leafletMap.latLngToLayerPoint(evt.latlng),
         evt
@@ -67,7 +69,8 @@ export default {
     },
     onMouseMove(evt) {
       const currentData = this.currentData;
-      const data = this.getEventData(evt, { dragging: this.mouseDown });
+      this.dragging = this.mouseDown;
+      const data = this.getEventData(evt);
       data.delta = currentData
         ? {
             latLng: {
@@ -100,6 +103,7 @@ export default {
     },
     onMouseDown(evt) {
       this.mouseDown = true;
+      this.dragging = false;
       this.mapEventsBus.emit("mousedown", this.getEventData(evt));
     },
     onMouseUp(evt) {
@@ -107,6 +111,7 @@ export default {
       this.mapEventsBus.emit("mouseup", this.getEventData(evt));
     },
     onClick(evt) {
+      // avoid send a click after a drag
       this.mapEventsBus.emit("click", this.getEventData(evt));
     },
     onContextMenu(evt) {
