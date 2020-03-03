@@ -67,6 +67,7 @@ export default {
       };
       return this.currentData;
     },
+    // mouse events
     onMouseMove(evt) {
       const currentData = this.currentData;
       this.dragging = this.mouseDown;
@@ -94,13 +95,6 @@ export default {
           };
       this.mapEventsBus.emit("mousemove", data);
     },
-    onTranformChange() {
-      const transform = point => ({
-        ...point,
-        position: this.leafletMap.latLngToLayerPoint(point.latLng)
-      });
-      this.mapEventsBus.emit("transform-change", transform);
-    },
     onMouseDown(evt) {
       this.mouseDown = true;
       this.dragging = false;
@@ -111,13 +105,21 @@ export default {
       this.mapEventsBus.emit("mouseup", this.getEventData(evt));
     },
     onClick(evt) {
-      // avoid send a click after a drag
       this.mapEventsBus.emit("click", this.getEventData(evt));
     },
     onContextMenu(evt) {
       this.mapEventsBus.emit("click", this.getEventData(evt));
       evt.originalEvent.preventDefault();
     },
+    // map event
+    onTranformChange() {
+      const transform = point => ({
+        ...point,
+        position: this.leafletMap.latLngToLayerPoint(point.latLng)
+      });
+      this.mapEventsBus.emit("transform-change", transform);
+    },
+    // handle event as a module.
     onMapMouseMove(mouseData) {
       if (this.isMyMode) {
         this.leafletMap.dragging.enable();

@@ -50,7 +50,7 @@ export default {
     this.initiate("polyline");
   },
   methods: {
-    update(mouseData) {
+    mouseMoveUpdate(mouseData) {
       // check if points are hovered
       this.points = pointsHelper.updatePoints({
         mouseData,
@@ -69,10 +69,40 @@ export default {
       const cursor = this.hovered ? "pointer" : "crosshair";
       this.$store.commit("setCursor", cursor);
     },
+    drag(mouseData) {
+      if (!mouseData.dragging) return;
+      // drag hovered point
+      this.points = this.points.map(point => {
+        if (!point.isHovered) return point;
+        return {
+          ...point,
+          latLng: mouseData.latLng,
+          position: mouseData.position
+        };
+      });
+      if (this.hoveredLineIndex < 0) return;
+      // drag hovered line
+      this.points = this.points.map((point, i) => {
+        if (this.hoveredLineIndex < i - 1 || this.hoveredLineIndex > i)
+          return point;
+        return {
+          ...point,
+          latLng: {
+            lat: point.latLng.lat + mouseData.delta.latLng.lat,
+            lng: point.latLng.lng + mouseData.delta.latLng.lng
+          },
+          position: {
+            x: point.position.x + mouseData.delta.position.x,
+            y: point.position.y + mouseData.delta.position.y
+          }
+        };
+      });
+    },
+    // map-pointer-events mixin methods
     onMapMouseMove(mouseData) {
       if (!this.isMyMode) return;
       this.drag(mouseData);
-      this.update(mouseData);
+      this.mouseMoveUpdate(mouseData);
     },
     onMapClick(mouseData) {
       if (!this.isMyMode) return;
@@ -104,35 +134,7 @@ export default {
     onMapTransformChange(transform) {
       this.points = this.points.map(point => transform(point));
     },
-    drag(mouseData) {
-      if (!mouseData.dragging) return;
-      // drag hovered point
-      this.points = this.points.map(point => {
-        if (!point.isHovered) return point;
-        return {
-          ...point,
-          latLng: mouseData.latLng,
-          position: mouseData.position
-        };
-      });
-      if (this.hoveredLineIndex < 0) return;
-      // drag hovered line
-      this.points = this.points.map((point, i) => {
-        if (this.hoveredLineIndex < i - 1 || this.hoveredLineIndex > i)
-          return point;
-        return {
-          ...point,
-          latLng: {
-            lat: point.latLng.lat + mouseData.delta.latLng.lat,
-            lng: point.latLng.lng + mouseData.delta.latLng.lng
-          },
-          position: {
-            x: point.position.x + mouseData.delta.position.x,
-            y: point.position.y + mouseData.delta.position.y
-          }
-        };
-      });
-    },
+    // loadsave mixin methods
     resetState() {
       this.points = [];
     }

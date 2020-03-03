@@ -45,12 +45,13 @@ export default {
     uploadFlightPlans(flightPlans) {
       localStorage.setItem("flight-plans", JSON.stringify(this.flightPlans));
     },
+    // initialisation of localStorage
     createFlightPlansIfNotExists() {
       if (this.fetchFlightPlans()) return;
       this.flightPlans = [];
       this.uploadFlightPlans();
     },
-    // emmition of save and load signals to the app
+    // emition of save and load events to the app
     onSaveFlightPlan() {
       const savedState = {};
       eventBus.emit("save", savedState);
@@ -74,9 +75,10 @@ export default {
       this.flightPlans = this.flightPlans.filter((e, i) => i !== +index);
       this.uploadFlightPlans();
     },
-    // save the state with the flight plan
-    // just as an example for the load-save mixin
+    // load-save mixin methods
     saveState(savedState) {
+      // save the state with the flight plan
+      // just as an example for the load-save mixin
       savedState.globalStore = this.$store.state;
     },
     loadState({ globalStore }) {
