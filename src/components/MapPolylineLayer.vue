@@ -6,6 +6,7 @@
       :lat-lng="point.latLng"
       :radius="point.isHovered ? 6 : 4"
       :color="point.isHovered ? 'green' : 'red'"
+      :fill="true"
     />
     <l-polyline :color="'red'" :lat-lngs="points.map(point => point.latLng)" />
     <l-polyline
