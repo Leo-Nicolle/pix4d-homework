@@ -19,3 +19,41 @@ button:disabled {
   background: #b4e9df;
   color: #777;
 }
+select {
+  flex: 1;
+  padding: 0.5em;
+  color: #fff;
+  cursor: pointer;
+  appearance: none;
+  outline: 0;
+  box-shadow: none;
+  background: #2c3e50;
+  background-image: none;
+  height: 3em;
+  line-height: 3;
+  background: #2c3e50;
+  overflow: hidden;
+  border-radius: 0.25em;
+}
+/* Arrow */
+select::after {
+  content: "\25BC";
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 1em;
+  background: #34495e;
+  cursor: pointer;
+  pointer-events: none;
+  -webkit-transition: 0.25s all ease;
+  -o-transition: 0.25s all ease;
+  transition: 0.25s all ease;
+}
+/* Transition */
+select:hover::after {
+  color: #1abc9c;
+}
+option {
+  cursor: pointer;
+  height: 3em;
+}

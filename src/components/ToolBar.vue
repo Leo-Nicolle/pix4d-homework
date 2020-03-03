@@ -84,7 +84,8 @@ export default {
   flex-direction: row;
   justify-content: center;
 }
-.toolbar > div > button {
+.toolbar > div > button,
+select {
   margin: 2px 4px;
 }
 </style>
