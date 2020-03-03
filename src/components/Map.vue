@@ -118,11 +118,12 @@ export default {
       this.mapEventsBus.emit("click", this.getEventData(evt));
       evt.originalEvent.preventDefault();
     },
-    onMapMouseMove() {
+    onMapMouseMove(mouseData) {
       if (this.isMyMode) {
         this.leafletMap.dragging.enable();
       } else {
         this.leafletMap.dragging.disable();
+        mouseData.evt.originalEvent.preventDefault();
       }
     }
   }
