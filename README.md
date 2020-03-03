@@ -14,11 +14,9 @@ The **Map** component is special because it is both the emitter of the mapEvents
 
 ##### Why two events bus ?
 
-There is the general eventBus in **js/event-bus** which should trigger any event that concerns the whole app
+There is the general eventBus in **js/event-bus** which should trigger any event that concerns the whole app.
 
-- eg: when clicking on save, the **App.vue** saves and load the global store and the MapPolyline will save its points.
-
-And the **mapEventsBus** in the **map-pointer-event** mixin which triggers only map pointer related events.
+The **mapEventsBus** in the **map-pointer-event** mixin triggers only map pointer related events.
 
 ## Project setup
 

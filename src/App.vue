@@ -17,7 +17,6 @@ import Toolbar from "./components/ToolBar.vue";
 import Help from "./components/Help.vue";
 
 import eventBus from "./js/event-bus";
-import loadSave from "./mixins/load-save";
 
 export default {
   name: "App",
@@ -26,7 +25,6 @@ export default {
     Toolbar,
     Help
   },
-  mixins: [loadSave],
   data() {
     return {
       flightPlans: []
@@ -74,16 +72,6 @@ export default {
     onDeleteFlightPlan(index) {
       this.flightPlans = this.flightPlans.filter((e, i) => i !== +index);
       this.uploadFlightPlans();
-    },
-    // load-save mixin methods
-    saveState(savedState) {
-      // save the state with the flight plan
-      // just as an example for the load-save mixin
-      savedState.globalStore = this.$store.state;
-    },
-    loadState({ globalStore }) {
-      if (!globalStore) return;
-      this.$store.replaceState(globalStore);
     }
   }
 };
