@@ -1,5 +1,7 @@
 import eventBus from "../js/event-bus";
-
+/*
+   Any component which has things to serialize should extend this mixin
+*/
 const loadSave = {
   data() {
     return {

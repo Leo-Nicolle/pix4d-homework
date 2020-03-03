@@ -1,5 +1,7 @@
 import * as math2d from "math2d";
 
+// just some helpers for maths with the points
+
 class PointsHelper {
   // transform an array of two points into a line object for math2d
   segmentToMath2dLine([pointA, pointB]) {

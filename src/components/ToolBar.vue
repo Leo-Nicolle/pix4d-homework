@@ -44,11 +44,9 @@ export default {
   watch: {
     flightPlans: function(newValue) {
       this.selectedFlightPlan = newValue.length - 1;
-      console.log("la");
     },
     selectedFlightPlan: function(newValue) {
-      console.log("emit");
-      this.$emit("load", newValue);
+      this.$emit("load-flight-plan", newValue);
     }
   },
 
@@ -62,13 +60,12 @@ export default {
       this.$store.commit("setMode", buttonMode);
     },
     onClickSave() {
-      this.$emit("save");
+      this.$emit("save-flight-plan");
     },
     onClickDelete() {
       this.$emit("delete-flight-plan", this.selectedFlightPlan);
     },
     onSelectChange(evt) {
-      console.log("ici");
       this.selectedFlightPlan = evt.target.value;
     }
   }

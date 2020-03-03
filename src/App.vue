@@ -2,8 +2,8 @@
   <div id="app">
     <Toolbar
       :flight-plans="flightPlans"
-      @save="onSave"
-      @load="onLoad"
+      @save-flight-plan="onSaveFlightPlan"
+      @load-flight-plan="onLoadFlightPlan"
       @delete-flight-plan="onDeleteFlightPlan"
     />
     <MapContainer />
@@ -33,6 +33,7 @@ export default {
     this.fetchFlightPlans();
   },
   methods: {
+    // communication with server (localStorage)
     fetchFlightPlans() {
       this.flightPlans = JSON.parse(localStorage.getItem("flight-plans"));
       return this.flightPlans;
@@ -45,13 +46,14 @@ export default {
       this.flightPlans = [];
       this.uploadFlightPlans();
     },
-    onSave() {
+    // emmition of save and load signals to the app
+    onSaveFlightPlan() {
       const savedState = {};
       eventBus.emit("save", savedState);
       this.flightPlans = this.flightPlans.concat(savedState);
       this.uploadFlightPlans();
     },
-    onLoad(index) {
+    onLoadFlightPlan(index) {
       const savedState = this.flightPlans[index];
       if (!savedState) return;
       eventBus.emit("load", savedState);
@@ -60,6 +62,8 @@ export default {
       this.flightPlans = this.flightPlans.filter((e, i) => i !== +index);
       this.uploadFlightPlans();
     },
+    // save the state with the flight plan
+    // just as an example for the load-save mixin
     saveState(savedState) {
       savedState.globalStore = this.$store.state;
     },
