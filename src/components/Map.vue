@@ -39,7 +39,8 @@ export default {
       zoom: 8,
       currentMouseData: {},
       mouseDown: false,
-      center: [47.31322, -1.319482]
+      center: [47.31322, -1.319482],
+      dataToSave: ["zoom", "center"]
     };
   },
   computed: {
